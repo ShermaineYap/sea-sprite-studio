@@ -1,15 +1,15 @@
 import { useState } from "react";
-import { Ship, Navigation, TrendingDown, Clock, Anchor, Waves, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Ship, Navigation, TrendingDown, Clock, Anchor, Waves, AlertCircle, CheckCircle2, MapPin, ChevronDown, ChevronUp } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { RouteMap } from "./RouteMap";
 import { PortSelector } from "./PortSelector";
 import { Port, OptimizedRoute } from "@/types/route";
-import { routeApi } from "@/services/routeApi";
 import { useToast } from "@/hooks/use-toast";
 
 export const RoutePlanner = () => {
@@ -25,11 +25,21 @@ export const RoutePlanner = () => {
     underwaterPercent: 30,
   });
 
+  const [currentLocation] = useState<Port>({
+    id: 'current',
+    name: 'Current Vessel Location',
+    lat: 1.3521,
+    lng: 103.8198,
+    country: 'Singapore'
+  });
+
   const [selectedPorts, setSelectedPorts] = useState<Port[]>([]);
   const [optimizedRoute, setOptimizedRoute] = useState<OptimizedRoute | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [isRoutePlannerOpen, setIsRoutePlannerOpen] = useState(true);
+  const [isVesselConfigOpen, setIsVesselConfigOpen] = useState(true);
 
-  const handleCalculateRoute = async () => {
+  const handleCalculateRoute = () => {
     if (selectedPorts.length < 2) {
       toast({
         title: "Insufficient Ports",
@@ -41,37 +51,15 @@ export const RoutePlanner = () => {
 
     setIsCalculating(true);
     
-    try {
-      const response = await routeApi.calculateRoute({
-        vessel: vesselConfig,
-        ports: selectedPorts,
-        optimizationMode: 'balanced',
-      });
-
-      if (response.success && response.route) {
-        setOptimizedRoute(response.route);
-        toast({
-          title: "Route Calculated",
-          description: `Optimized route with ${response.route.segments.length} segments generated successfully.`,
-        });
-      } else {
-        toast({
-          title: "Calculation Failed",
-          description: response.error || "Unable to calculate route. Please try again.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred. Using demo mode.",
-        variant: "destructive",
-      });
-      // Fallback to demo data
+    // Using demo mode for frontend-only version
+    setTimeout(() => {
       generateDemoRoute();
-    } finally {
       setIsCalculating(false);
-    }
+      toast({
+        title: "Route Calculated",
+        description: `Optimized route with ${selectedPorts.length - 1} segments generated successfully.`,
+      });
+    }, 1000);
   };
 
   const generateDemoRoute = () => {
@@ -141,140 +129,187 @@ export const RoutePlanner = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Vessel Configuration Panel */}
-          <Card className="lg:col-span-1 border-2">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Ship className="h-5 w-5 text-primary" />
-                Vessel Configuration
-              </CardTitle>
-              <CardDescription>Set your vessel specifications</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="speed">Speed (knots)</Label>
-                <Input
-                  id="speed"
-                  type="number"
-                  value={vesselConfig.speed}
-                  onChange={(e) => setVesselConfig({ ...vesselConfig, speed: parseFloat(e.target.value) || 0 })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="fuel">Fuel Consumption (tons/day)</Label>
-                <Input
-                  id="fuel"
-                  type="number"
-                  value={vesselConfig.fuelConsumption}
-                  onChange={(e) => setVesselConfig({ ...vesselConfig, fuelConsumption: parseFloat(e.target.value) || 0 })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="capacity">Tank Capacity (tons)</Label>
-                <Input
-                  id="capacity"
-                  type="number"
-                  value={vesselConfig.tankCapacity}
-                  onChange={(e) => setVesselConfig({ ...vesselConfig, tankCapacity: parseFloat(e.target.value) || 0 })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="margin">Safety Margin (tons)</Label>
-                <Input
-                  id="margin"
-                  type="number"
-                  value={vesselConfig.safetyMargin}
-                  onChange={(e) => setVesselConfig({ ...vesselConfig, safetyMargin: parseFloat(e.target.value) || 0 })}
-                />
-              </div>
-
-              <div className="grid grid-cols-3 gap-2">
-                <div className="space-y-2">
-                  <Label htmlFor="length">Length (m)</Label>
-                  <Input
-                    id="length"
-                    type="number"
-                    value={vesselConfig.length}
-                    onChange={(e) => setVesselConfig({ ...vesselConfig, length: parseFloat(e.target.value) || 0 })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="width">Width (m)</Label>
-                  <Input
-                    id="width"
-                    type="number"
-                    value={vesselConfig.width}
-                    onChange={(e) => setVesselConfig({ ...vesselConfig, width: parseFloat(e.target.value) || 0 })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="height">Height (m)</Label>
-                  <Input
-                    id="height"
-                    type="number"
-                    value={vesselConfig.height}
-                    onChange={(e) => setVesselConfig({ ...vesselConfig, height: parseFloat(e.target.value) || 0 })}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="underwater">Underwater (%)</Label>
-                <Input
-                  id="underwater"
-                  type="number"
-                  value={vesselConfig.underwaterPercent}
-                  onChange={(e) => setVesselConfig({ ...vesselConfig, underwaterPercent: parseFloat(e.target.value) || 0 })}
-                />
-              </div>
-
-              <PortSelector 
-                selectedPorts={selectedPorts}
-                onPortsChange={setSelectedPorts}
-              />
-
-              <Button 
-                className="w-full bg-primary hover:bg-primary/90"
-                onClick={handleCalculateRoute}
-                disabled={isCalculating || selectedPorts.length < 2}
-              >
-                {isCalculating ? "Calculating..." : "Calculate Route"}
-              </Button>
-              
-              {optimizedRoute && optimizedRoute.warnings.length > 0 && (
-                <div className="space-y-2">
-                  {optimizedRoute.warnings.map((warning, i) => (
-                    <div key={i} className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
-                      <AlertCircle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
-                      <p className="text-sm text-destructive">{warning}</p>
+          {/* Left Panel - Split into Route Planner and Vessel Configuration */}
+          <div className="lg:col-span-1 space-y-4">
+            {/* Route Planner Section */}
+            <Card className="border-2">
+              <Collapsible open={isRoutePlannerOpen} onOpenChange={setIsRoutePlannerOpen}>
+                <CardHeader className="pb-3">
+                  <CollapsibleTrigger asChild>
+                    <div className="flex items-center justify-between cursor-pointer group">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-5 w-5 text-primary" />
+                        <CardTitle className="text-lg">Route Planner</CardTitle>
+                      </div>
+                      {isRoutePlannerOpen ? (
+                        <ChevronUp className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+                      ) : (
+                        <ChevronDown className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+                      )}
                     </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                  </CollapsibleTrigger>
+                  <CardDescription>Select start and destination ports</CardDescription>
+                </CardHeader>
+                <CollapsibleContent>
+                  <CardContent>
+                    <PortSelector 
+                      selectedPorts={selectedPorts}
+                      onPortsChange={setSelectedPorts}
+                    />
+                  </CardContent>
+                </CollapsibleContent>
+              </Collapsible>
+            </Card>
 
-          {/* Route Visualization & Results */}
+            {/* Vessel Configuration Section */}
+            <Card className="border-2">
+              <Collapsible open={isVesselConfigOpen} onOpenChange={setIsVesselConfigOpen}>
+                <CardHeader className="pb-3">
+                  <CollapsibleTrigger asChild>
+                    <div className="flex items-center justify-between cursor-pointer group">
+                      <div className="flex items-center gap-2">
+                        <Ship className="h-5 w-5 text-primary" />
+                        <CardTitle className="text-lg">Vessel Configuration</CardTitle>
+                      </div>
+                      {isVesselConfigOpen ? (
+                        <ChevronUp className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+                      ) : (
+                        <ChevronDown className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+                      )}
+                    </div>
+                  </CollapsibleTrigger>
+                  <CardDescription>Set your vessel specifications</CardDescription>
+                </CardHeader>
+                <CollapsibleContent>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="speed">Speed (knots)</Label>
+                      <Input
+                        id="speed"
+                        type="number"
+                        value={vesselConfig.speed}
+                        onChange={(e) => setVesselConfig({ ...vesselConfig, speed: parseFloat(e.target.value) || 0 })}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="fuel">Fuel Consumption (tons/day)</Label>
+                      <Input
+                        id="fuel"
+                        type="number"
+                        value={vesselConfig.fuelConsumption}
+                        onChange={(e) => setVesselConfig({ ...vesselConfig, fuelConsumption: parseFloat(e.target.value) || 0 })}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="capacity">Tank Capacity (tons)</Label>
+                      <Input
+                        id="capacity"
+                        type="number"
+                        value={vesselConfig.tankCapacity}
+                        onChange={(e) => setVesselConfig({ ...vesselConfig, tankCapacity: parseFloat(e.target.value) || 0 })}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="margin">Safety Margin (tons)</Label>
+                      <Input
+                        id="margin"
+                        type="number"
+                        value={vesselConfig.safetyMargin}
+                        onChange={(e) => setVesselConfig({ ...vesselConfig, safetyMargin: parseFloat(e.target.value) || 0 })}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="length">Length (m)</Label>
+                        <Input
+                          id="length"
+                          type="number"
+                          value={vesselConfig.length}
+                          onChange={(e) => setVesselConfig({ ...vesselConfig, length: parseFloat(e.target.value) || 0 })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="width">Width (m)</Label>
+                        <Input
+                          id="width"
+                          type="number"
+                          value={vesselConfig.width}
+                          onChange={(e) => setVesselConfig({ ...vesselConfig, width: parseFloat(e.target.value) || 0 })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="height">Height (m)</Label>
+                        <Input
+                          id="height"
+                          type="number"
+                          value={vesselConfig.height}
+                          onChange={(e) => setVesselConfig({ ...vesselConfig, height: parseFloat(e.target.value) || 0 })}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="underwater">Underwater (%)</Label>
+                      <Input
+                        id="underwater"
+                        type="number"
+                        value={vesselConfig.underwaterPercent}
+                        onChange={(e) => setVesselConfig({ ...vesselConfig, underwaterPercent: parseFloat(e.target.value) || 0 })}
+                      />
+                    </div>
+                  </CardContent>
+                </CollapsibleContent>
+              </Collapsible>
+            </Card>
+
+            {/* Calculate Route Button */}
+            <Button 
+              className="w-full bg-primary hover:bg-primary/90 h-12"
+              onClick={handleCalculateRoute}
+              disabled={isCalculating || selectedPorts.length < 2}
+            >
+              {isCalculating ? "Calculating Route..." : "Calculate Route"}
+            </Button>
+            
+            {optimizedRoute && optimizedRoute.warnings.length > 0 && (
+              <div className="space-y-2">
+                {optimizedRoute.warnings.map((warning, i) => (
+                  <div key={i} className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                    <AlertCircle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-destructive">{warning}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Right Panel - Route Visualization & Results */}
           <Card className="lg:col-span-2 border-2">
             <CardHeader>
-              <CardTitle>Route Optimization Results</CardTitle>
-              <CardDescription>View your optimized route and analytics</CardDescription>
+              <CardTitle>Route Visualization</CardTitle>
+              <CardDescription>
+                {optimizedRoute 
+                  ? "View your optimized route and analytics" 
+                  : "Configure vessel and select ports to generate route"}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="map" className="w-full">
                 <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="map">Map View</TabsTrigger>
                   <TabsTrigger value="metrics">Metrics</TabsTrigger>
-                  <TabsTrigger value="ports">Ports</TabsTrigger>
+                  <TabsTrigger value="summary">Summary</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="map" className="space-y-4 mt-6">
                   <RouteMap
-                    ports={optimizedRoute?.ports || []}
+                    ports={optimizedRoute?.ports || [currentLocation]}
                     route={optimizedRoute?.segments || []}
+                    currentLocation={currentLocation}
                   />
                 </TabsContent>
 
@@ -382,7 +417,7 @@ export const RoutePlanner = () => {
                   )}
                 </TabsContent>
 
-                <TabsContent value="ports" className="space-y-4 mt-6">
+                <TabsContent value="summary" className="space-y-4 mt-6">
                   {optimizedRoute && optimizedRoute.segments.length > 0 ? (
                     <div className="space-y-3">
                       {optimizedRoute.segments.map((segment, index) => (
@@ -443,8 +478,28 @@ export const RoutePlanner = () => {
                     <div className="text-center py-12">
                       <Anchor className="h-12 w-12 mx-auto mb-3 text-muted-foreground opacity-50" />
                       <p className="text-muted-foreground">
-                        Calculate route to view port-to-port details
+                        Calculate route to view summary details
                       </p>
+                      <div className="mt-6 p-4 rounded-lg border bg-card/30 text-left max-w-md mx-auto">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Ship className="h-5 w-5 text-primary" />
+                          <h4 className="font-semibold">Current Vessel Status</h4>
+                        </div>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Location:</span>
+                            <span className="font-medium">{currentLocation.name}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Speed:</span>
+                            <span className="font-medium">{vesselConfig.speed} knots</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Fuel Capacity:</span>
+                            <span className="font-medium">{vesselConfig.tankCapacity} tons</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </TabsContent>

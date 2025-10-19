@@ -15,6 +15,7 @@ interface Port {
   name: string;
   lat: number;
   lng: number;
+  country?: string;
 }
 
 interface RouteSegment {
@@ -28,13 +29,15 @@ interface RouteSegment {
 interface RouteMapProps {
   ports?: Port[];
   route?: RouteSegment[];
+  currentLocation?: Port;
   center?: [number, number];
   zoom?: number;
 }
 
 export const RouteMap = ({ 
   ports = [], 
-  route = [], 
+  route = [],
+  currentLocation,
   center = [1.3521, 103.8198], // Singapore as default
   zoom = 4 
 }: RouteMapProps) => {
@@ -77,20 +80,71 @@ export const RouteMap = ({
       }
     });
 
-    // Add port markers
-    ports.forEach((port, index) => {
-      const marker = L.marker([port.lat, port.lng], {
-        title: port.name,
+    // If no route calculated, show current vessel location
+    if (route.length === 0 && currentLocation) {
+      const vesselIcon = L.divIcon({
+        className: 'custom-vessel-marker',
+        html: `
+          <div style="
+            background: #0ea5e9;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            animation: pulse 2s infinite;
+          "></div>
+        `,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+      });
+
+      const marker = L.marker([currentLocation.lat, currentLocation.lng], {
+        icon: vesselIcon,
+        title: currentLocation.name,
       }).addTo(mapRef.current!);
 
+      marker.bindPopup(`
+        <div class="font-semibold">🚢 ${currentLocation.name}</div>
+        <div class="text-sm text-muted-foreground">Current vessel position</div>
+        <div class="text-xs text-muted-foreground mt-1">
+          ${currentLocation.lat.toFixed(4)}°, ${currentLocation.lng.toFixed(4)}°
+        </div>
+      `);
+
+      mapRef.current.setView([currentLocation.lat, currentLocation.lng], 8);
+      return;
+    }
+
+    // Add port markers for calculated route
+    ports.forEach((port, index) => {
       const isStart = index === 0;
       const isEnd = index === ports.length - 1;
+      
+      const iconHtml = isStart 
+        ? `<div style="background: #22c55e; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3);"></div>`
+        : isEnd
+        ? `<div style="background: #ef4444; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3);"></div>`
+        : `<div style="background: #f97316; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3);"></div>`;
+
+      const customIcon = L.divIcon({
+        className: 'custom-port-marker',
+        html: iconHtml,
+        iconSize: isStart || isEnd ? [20, 20] : [16, 16],
+        iconAnchor: isStart || isEnd ? [10, 10] : [8, 8],
+      });
+
+      const marker = L.marker([port.lat, port.lng], {
+        icon: customIcon,
+        title: port.name,
+      }).addTo(mapRef.current!);
       
       marker.bindPopup(`
         <div class="font-semibold">${port.name}</div>
         <div class="text-sm text-muted-foreground">
-          ${isStart ? '🟢 Start Port' : isEnd ? '🔴 End Port' : `⚓ Port ${index + 1}`}
+          ${isStart ? '🟢 Start Port' : isEnd ? '🔴 Destination' : `⚓ Waypoint ${index}`}
         </div>
+        <div class="text-xs text-muted-foreground mt-1">${port.country}</div>
       `);
     });
 
