@@ -50,6 +50,12 @@ export const RoutePlanner = () => {
     }
 
     setIsCalculating(true);
+
+    // Scroll to top of route planner section smoothly
+    const routePlannerSection = document.getElementById("route-planner");
+    if (routePlannerSection) {
+      routePlannerSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
     
     // Using demo mode for frontend-only version
     setTimeout(() => {
@@ -111,7 +117,7 @@ export const RoutePlanner = () => {
   const toRad = (deg: number) => deg * (Math.PI / 180);
 
   return (
-    <section id="planner" className="py-24 bg-muted/30">
+    <section id="route-planner" className="py-24 bg-muted/30 scroll-mt-20">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 animate-fade-in">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 mb-4">

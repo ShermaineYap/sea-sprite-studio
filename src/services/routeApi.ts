@@ -1,4 +1,5 @@
 import { RouteRequest, RouteResponse, Port } from '@/types/route';
+import { PORTS_DATASET, searchPorts as searchPortsData } from '@/data/ports';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
@@ -89,21 +90,10 @@ export const routeApi = {
       return data.ports || [];
     } catch (error) {
       console.error('Port search failed:', error);
-      return mockPorts.filter(p => 
-        p.name.toLowerCase().includes(query.toLowerCase())
-      );
+      return searchPortsData(query);
     }
   },
 };
 
-// Mock data for development/fallback
-const mockPorts: Port[] = [
-  { id: '1', name: 'Port of Singapore', lat: 1.3521, lng: 103.8198, country: 'Singapore' },
-  { id: '2', name: 'Port of Shanghai', lat: 31.2304, lng: 121.4737, country: 'China' },
-  { id: '3', name: 'Port of Rotterdam', lat: 51.9244, lng: 4.4777, country: 'Netherlands' },
-  { id: '4', name: 'Port of Hong Kong', lat: 22.3193, lng: 114.1694, country: 'Hong Kong' },
-  { id: '5', name: 'Port of Busan', lat: 35.1796, lng: 129.0756, country: 'South Korea' },
-  { id: '6', name: 'Port of Los Angeles', lat: 33.7405, lng: -118.2720, country: 'USA' },
-  { id: '7', name: 'Port of Dubai', lat: 25.2769, lng: 55.3257, country: 'UAE' },
-  { id: '8', name: 'Port of Tokyo', lat: 35.6528, lng: 139.7594, country: 'Japan' },
-];
+// Use comprehensive port dataset
+const mockPorts: Port[] = PORTS_DATASET;
