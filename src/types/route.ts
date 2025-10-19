@@ -15,6 +15,7 @@ export interface Port {
   lat: number;
   lng: number;
   country?: string;
+  coordinates: string;
 }
 
 export interface RouteSegment {
