@@ -30,7 +30,8 @@ export const RoutePlanner = () => {
     name: 'Current Vessel Location',
     lat: 1.3521,
     lng: 103.8198,
-    country: 'Singapore'
+    country: 'Singapore',
+    coordinates: '1.3521, 103.8198'
   });
 
   const [selectedPorts, setSelectedPorts] = useState<Port[]>([]);

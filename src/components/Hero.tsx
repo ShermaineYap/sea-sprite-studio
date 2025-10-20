@@ -1,8 +1,11 @@
 import { ArrowRight, Ship, TrendingDown, Map, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import heroShip from "@/assets/hero-ship.jpg";
 
 export const Hero = () => {
+  const navigate = useNavigate();
+  
   return (
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden pt-16">
       {/* Background Image with Overlay */}
@@ -43,11 +46,20 @@ export const Hero = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-            <Button size="lg" className="bg-background text-foreground hover:bg-background/90 text-lg px-8 py-6">
+            <Button 
+              size="lg" 
+              className="bg-background text-foreground hover:bg-background/90 text-lg px-8 py-6"
+              onClick={() => navigate('/plan-route')}
+            >
               Start Planning
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button size="lg" variant="outline" className="border-2 border-background text-background hover:bg-background hover:text-foreground text-lg px-8 py-6">
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="border-2 border-background text-background hover:bg-background hover:text-foreground text-lg px-8 py-6"
+              onClick={() => navigate('/plan-route')}
+            >
               View Demo
             </Button>
           </div>
