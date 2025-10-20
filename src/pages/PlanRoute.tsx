@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Ship, Navigation, MapPin, ChevronDown, ChevronUp } from "lucide-react";
+import { Ship, Navigation, MapPin, ChevronDown, ChevronUp, List, Map } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PortSelector } from "@/components/PortSelector";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import CurrentLocationMap from "@/components/CurrentLocationMap";
 import { Port } from "@/types/route";
 import { useToast } from "@/hooks/use-toast";
 
@@ -30,6 +32,10 @@ const PlanRoute = () => {
   const [selectedPorts, setSelectedPorts] = useState<Port[]>([]);
   const [isRoutePlannerOpen, setIsRoutePlannerOpen] = useState(true);
   const [isVesselConfigOpen, setIsVesselConfigOpen] = useState(true);
+  const [selectionMode, setSelectionMode] = useState<"list" | "map">("list");
+  
+  // Default current location (Singapore Strait)
+  const currentLocation = { lat: 1.2921, lng: 103.8198 };
 
   const handleGenerateRoute = () => {
     if (selectedPorts.length < 2) {
@@ -72,6 +78,11 @@ const PlanRoute = () => {
                 Configure your vessel parameters and select ports to generate an optimized maritime route
               </p>
             </div>
+            
+            {/* Current Location Map */}
+            <div className="max-w-5xl mx-auto mt-8">
+              <CurrentLocationMap currentLocation={currentLocation} />
+            </div>
           </div>
         </section>
 
@@ -102,14 +113,45 @@ const PlanRoute = () => {
                           <ChevronDown className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
                         )}
                       </div>
-                    </CollapsibleTrigger>
+                  </CollapsibleTrigger>
                   </CardHeader>
                   <CollapsibleContent>
                     <CardContent className="pt-0">
-                      <PortSelector 
-                        selectedPorts={selectedPorts}
-                        onPortsChange={setSelectedPorts}
-                      />
+                      <Tabs value={selectionMode} onValueChange={(v) => setSelectionMode(v as "list" | "map")} className="w-full">
+                        <TabsList className="grid w-full grid-cols-2 mb-4">
+                          <TabsTrigger value="list" className="flex items-center gap-2">
+                            <List className="h-4 w-4" />
+                            Select from List
+                          </TabsTrigger>
+                          <TabsTrigger value="map" className="flex items-center gap-2">
+                            <Map className="h-4 w-4" />
+                            Click on Map
+                          </TabsTrigger>
+                        </TabsList>
+                        
+                        <TabsContent value="list" className="mt-0">
+                          <PortSelector 
+                            selectedPorts={selectedPorts}
+                            onPortsChange={setSelectedPorts}
+                          />
+                        </TabsContent>
+                        
+                        <TabsContent value="map" className="mt-0">
+                          <div className="p-6 border-2 border-dashed border-muted-foreground/30 rounded-lg bg-muted/20">
+                            <div className="text-center space-y-3">
+                              <Map className="h-12 w-12 mx-auto text-muted-foreground" />
+                              <h4 className="font-semibold text-foreground">Interactive Map Selection</h4>
+                              <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                                Google Maps integration coming soon. Click on the map to select ports directly.
+                              </p>
+                              <p className="text-xs text-muted-foreground italic">
+                                (This feature will be integrated by your teammate)
+                              </p>
+                            </div>
+                          </div>
+                        </TabsContent>
+                      </Tabs>
+                      
                       <div className="mt-4 p-3 rounded-lg bg-accent/5 border border-accent/10">
                         <p className="text-sm text-muted-foreground">
                           <span className="font-semibold text-foreground">{selectedPorts.length}</span> port{selectedPorts.length !== 1 ? 's' : ''} selected
