@@ -52,131 +52,22 @@ npm run dev
 
 ## What technologies are used for this project?
 
-WaveWays is built with a modern, production-ready tech stack optimized for performance, developer experience, and scalability:
+This project is built with:
 
-### Core Framework & Build Tools
-
-**[Vite](https://vitejs.dev/)** - Next Generation Frontend Tooling
-- Lightning-fast Hot Module Replacement (HMR) for instant feedback during development
-- Optimized production builds with code splitting and tree-shaking
-- Native ESM-based dev server for superior performance
-- Significantly faster than traditional bundlers like Webpack
-
-**[React 19](https://react.dev/)** - UI Library
-- Component-based architecture for reusable and maintainable code
-- Virtual DOM for efficient UI updates and rendering
-- Rich ecosystem with extensive third-party libraries
-- Industry-standard framework with strong community support
-
-**[TypeScript](https://www.typescriptlang.org/)** - Type Safety
-- Static type checking to catch errors during development
-- Enhanced IDE support with intelligent code completion
-- Better code documentation through type definitions
-- Improved refactoring capabilities and code maintainability
-
-### Styling & UI Components
-
-**[Tailwind CSS](https://tailwindcss.com/)** - Utility-First CSS Framework
-- Rapid UI development with utility classes
-- Custom design system with ocean-inspired maritime theme
-- Responsive design with mobile-first approach
-- Optimized bundle size through PurgeCSS integration
-- Dark mode support out of the box
-
-**[shadcn/ui](https://ui.shadcn.com/)** - Component Library
-- Beautifully designed, accessible React components
-- Built on Radix UI primitives for robust accessibility
-- Fully customizable to match WaveWays' maritime branding
-- Copy-paste components that you own and control
-- Not a dependency - components live in your codebase
-
-### Routing & Navigation
-
-**[React Router v6](https://reactrouter.com/)** - Client-Side Routing
-- Multi-page application with seamless navigation
-- Professional two-page workflow (Route Planning → Visualization)
-- Programmatic navigation for enhanced UX
-- URL-based state management
-
-### Mapping & Geospatial
-
-**[Leaflet](https://leafletjs.com/)** & **[React Leaflet](https://react-leaflet.js.org/)** - Interactive Maps
-- Open-source mapping library with no API costs
-- Interactive route visualization with custom markers
-- Real-time vessel location tracking
-- Smooth animations and user interactions
-- Custom maritime-themed map styling
-
-### Data Management
-
-**[TanStack Query](https://tanstack.com/query/)** (React Query) - Server State Management
-- Efficient data fetching and caching
-- Automatic background refetching
-- Optimistic updates for better UX
-- Built-in loading and error states
-
-### Form Handling & Validation
-
-**[React Hook Form](https://react-hook-form.com/)** - Form Management
-- Performant, flexible form validation
-- Minimal re-renders for better performance
-- Easy integration with TypeScript
-- Built-in validation with Zod schema
-
-**[Zod](https://zod.dev/)** - Schema Validation
-- TypeScript-first validation library
-- Runtime type checking for user inputs
-- Comprehensive error messages
-- Seamless integration with React Hook Form
-
-### Additional Libraries
-
-**[Lucide React](https://lucide.dev/)** - Icon System
-- Beautiful, consistent icon set
-- Tree-shakeable for optimal bundle size
-- Extensive maritime and navigation icons
-
-**[date-fns](https://date-fns.org/)** - Date Utilities
-- Modern JavaScript date utility library
-- Modular and lightweight
-- Comprehensive date formatting and manipulation
-
-**[Sonner](https://sonner.emilkowal.ski/)** - Toast Notifications
-- Beautiful toast notifications
-- Smooth animations
-- Fully customizable
-
-**[Recharts](https://recharts.org/)** - Data Visualization
-- React-based charting library
-- Responsive and customizable charts
-- Perfect for displaying route metrics and analytics
-
-### Why This Stack?
-
-This technology stack was chosen specifically for WaveWays to ensure:
-
-1. **Performance**: Vite and React provide blazing-fast development and optimized production builds
-2. **Type Safety**: TypeScript catches errors early and improves code quality
-3. **Professional UI**: shadcn/ui and Tailwind CSS enable rapid development of a polished, maritime-themed interface
-4. **Scalability**: Modular architecture allows easy addition of new features
-5. **Developer Experience**: Modern tooling with excellent documentation and community support
-6. **Hackathon Ready**: Fast iteration and deployment capabilities
-7. **No Backend Required**: Pure frontend solution with client-side calculations (ready for backend integration)
-
-### Project Structure
-
-```
-src/
-├── components/       # Reusable UI components
-│   ├── ui/          # shadcn/ui components
-│   └── ...          # Custom components
-├── pages/           # Route-based page components
-├── services/        # API and business logic
-├── data/            # Static data (port database)
-├── types/           # TypeScript type definitions
-├── hooks/           # Custom React hooks
-└── lib/             # Utility functions
-```
+- **[Vite](https://vitejs.dev/)** - Frontend build tool
+- **[React 19](https://react.dev/)** - UI library
+- **[TypeScript](https://www.typescriptlang.org/)** - Type safety
+- **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework
+- **[shadcn/ui](https://ui.shadcn.com/)** - Component library
+- **[React Router v6](https://reactrouter.com/)** - Client-side routing
+- **[Google Maps API](https://developers.google.com/maps)** - Interactive maps and geospatial visualization
+- **[TanStack Query](https://tanstack.com/query/)** - Server state management
+- **[React Hook Form](https://react-hook-form.com/)** - Form management
+- **[Zod](https://zod.dev/)** - Schema validation
+- **[Lucide React](https://lucide.dev/)** - Icon system
+- **[date-fns](https://date-fns.org/)** - Date utilities
+- **[Sonner](https://sonner.emilkowal.ski/)** - Toast notifications
+- **[Recharts](https://recharts.org/)** - Data visualization
 
 ## How can I deploy this project?
 
