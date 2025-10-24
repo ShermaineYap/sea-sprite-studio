@@ -2,6 +2,7 @@ import { Ship, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import logo from "@/assets/logo.png";
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -19,10 +20,8 @@ export const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="p-2 rounded-lg bg-primary text-primary-foreground transition-transform group-hover:scale-110">
-              <Ship className="h-5 w-5" />
-            </div>
+          <Link to="/" className="flex items-center gap-0 group">
+            <img src={logo} alt="WaveWays Logo" className="h-16 w-16 object-contain" />
             <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               WaveWays
             </span>
@@ -50,7 +49,7 @@ export const Navbar = () => {
                 </Link>
               );
             })}
-            <Button 
+            <Button
               className="bg-primary hover:bg-primary/90"
               onClick={() => navigate('/plan-route')}
             >
@@ -97,7 +96,7 @@ export const Navbar = () => {
                   </Link>
                 );
               })}
-              <Button 
+              <Button
                 className="bg-primary hover:bg-primary/90 w-full"
                 onClick={() => {
                   navigate('/plan-route');

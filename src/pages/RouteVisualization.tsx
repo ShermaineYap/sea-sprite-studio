@@ -9,6 +9,7 @@ import { Footer } from "@/components/Footer";
 import { RouteMap } from "@/components/RouteMap";
 import { Port, OptimizedRoute } from "@/types/route";
 import { useToast } from "@/hooks/use-toast";
+import MapView from "@/components/mapVisual";
 
 const RouteVisualization = () => {
   const navigate = useNavigate();
@@ -18,14 +19,35 @@ const RouteVisualization = () => {
   const [selectedPorts, setSelectedPorts] = useState<Port[]>([]);
   const [isCalculating, setIsCalculating] = useState(true);
 
-  const [currentLocation] = useState<Port>({
-    id: 'current',
-    name: 'Current Vessel Location',
-    lat: 1.3521,
-    lng: 103.8198,
-    country: 'Singapore',
-    coordinates: '1.3521, 103.8198'
-  });
+  const [currentLocation, setCurrentLocation] = useState<Port | null>(null);
+
+  const handleMapClick = (lat: number, lng: number) => {
+    if (!vesselConfig || !optimizedRoute) return;
+
+    const portName = `Custom Point ${optimizedRoute.ports.length + 1}`;
+    const newPort: Port = {
+      id: `custom-${Date.now()}`,       // unique id
+      name: portName,
+      lat,
+      lng,
+      country: "Unknown",
+      coordinates: `${lat},${lng}`
+    };
+
+    const updatedPorts = [...optimizedRoute.ports, newPort];
+
+    setSelectedPorts(updatedPorts);
+    generateDemoRoute(vesselConfig, updatedPorts);
+  };
+
+
+  useEffect(() => {
+    const storedSelectedPorts = sessionStorage.getItem('selectedPorts');
+    if (storedSelectedPorts) {
+      const ports: Port[] = JSON.parse(storedSelectedPorts);
+      if (ports.length > 0) setCurrentLocation(ports[0]); // first port as current location
+    }
+  }, []);
 
   useEffect(() => {
     // Retrieve data from sessionStorage
@@ -88,7 +110,7 @@ const RouteVisualization = () => {
       totalFuel,
       totalTime,
       ports,
-      warnings: totalFuel > config.tankCapacity - config.safetyMargin 
+      warnings: totalFuel > config.tankCapacity - config.safetyMargin
         ? ['⚠️ Fuel capacity may be insufficient for this route. Consider adding refueling stops.']
         : [],
     });
@@ -122,14 +144,14 @@ const RouteVisualization = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
-      
+
       <main className="flex-1">
         {/* Header */}
         <section className="py-12 bg-gradient-to-b from-primary/5 to-background border-b">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between mb-6">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 onClick={() => navigate('/plan-route')}
                 className="gap-2"
               >

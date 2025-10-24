@@ -7,6 +7,8 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import PlanRoute from "./pages/PlanRoute";
 import RouteVisualization from "./pages/RouteVisualization";
+import MapVisual from "./components/mapVisual";
+
 
 const queryClient = new QueryClient();
 

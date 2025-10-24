@@ -13,11 +13,12 @@ import { Footer } from "@/components/Footer";
 import CurrentLocationMap from "@/components/CurrentLocationMap";
 import { Port } from "@/types/route";
 import { useToast } from "@/hooks/use-toast";
+import { RouteMap } from "@/components/RouteMap";
 
 const PlanRoute = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+
   const [vesselConfig, setVesselConfig] = useState({
     speed: 20.0,
     fuelConsumption: 20.0,
@@ -33,7 +34,7 @@ const PlanRoute = () => {
   const [isRoutePlannerOpen, setIsRoutePlannerOpen] = useState(true);
   const [isVesselConfigOpen, setIsVesselConfigOpen] = useState(true);
   const [selectionMode, setSelectionMode] = useState<"list" | "map">("list");
-  
+
   // Default current location (Singapore Strait)
   const currentLocation = { lat: 1.2921, lng: 103.8198 };
 
@@ -50,7 +51,7 @@ const PlanRoute = () => {
     // Store data in sessionStorage for the visualization page
     sessionStorage.setItem('vesselConfig', JSON.stringify(vesselConfig));
     sessionStorage.setItem('selectedPorts', JSON.stringify(selectedPorts));
-    
+
     // Navigate to visualization page
     navigate('/route-visualization');
   };
@@ -58,7 +59,7 @@ const PlanRoute = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
-      
+
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative py-24 bg-gradient-to-b from-primary/5 via-accent/5 to-background overflow-hidden">
@@ -78,18 +79,23 @@ const PlanRoute = () => {
                 Configure your vessel parameters and select ports to generate an optimized maritime route
               </p>
             </div>
-            
-            {/* Current Location Map */}
-            <div className="max-w-5xl mx-auto mt-8">
-              <CurrentLocationMap currentLocation={currentLocation} />
-            </div>
           </div>
+        </section>
+
+        {/* Map Section */}
+        <section className="container mx-auto px-4 -mt-16 z-10 relative">
+          <RouteMap
+            currentLocation={{ lat: currentLocation.lat, lng: currentLocation.lng, name: "You Are Here" }}
+            ports={selectedPorts}
+            zoom={12}
+          />
         </section>
 
         {/* Configuration Section */}
         <section className="py-16 bg-muted/30">
           <div className="container mx-auto px-4">
             <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+              
               {/* Route Planner Card */}
               <Card className="border-2 shadow-lg">
                 <Collapsible open={isRoutePlannerOpen} onOpenChange={setIsRoutePlannerOpen}>
@@ -113,7 +119,7 @@ const PlanRoute = () => {
                           <ChevronDown className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
                         )}
                       </div>
-                  </CollapsibleTrigger>
+                    </CollapsibleTrigger>
                   </CardHeader>
                   <CollapsibleContent>
                     <CardContent className="pt-0">
@@ -128,30 +134,37 @@ const PlanRoute = () => {
                             Click on Map
                           </TabsTrigger>
                         </TabsList>
-                        
+
                         <TabsContent value="list" className="mt-0">
-                          <PortSelector 
+                          <PortSelector
                             selectedPorts={selectedPorts}
                             onPortsChange={setSelectedPorts}
                           />
                         </TabsContent>
-                        
+
                         <TabsContent value="map" className="mt-0">
-                          <div className="p-6 border-2 border-dashed border-muted-foreground/30 rounded-lg bg-muted/20">
-                            <div className="text-center space-y-3">
-                              <Map className="h-12 w-12 mx-auto text-muted-foreground" />
-                              <h4 className="font-semibold text-foreground">Interactive Map Selection</h4>
-                              <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                                Google Maps integration coming soon. Click on the map to select ports directly.
-                              </p>
-                              <p className="text-xs text-muted-foreground italic">
-                                (This feature will be integrated by your teammate)
-                              </p>
-                            </div>
+                          <div className="rounded-lg overflow-hidden border">
+                            <CurrentLocationMap
+                              currentLocation={currentLocation}
+                              ports={selectedPorts}
+                              onMapClick={(lat, lng) => {
+                                const portName = `Custom Port ${selectedPorts.length + 1}`;
+                                const newPort: Port = {
+                                  id: `custom-${Date.now()}`,
+                                  name: portName,
+                                  lat,
+                                  lng,
+                                  country: "Unknown",
+                                  coordinates: `${lat},${lng}`,
+                                };
+                                setSelectedPorts([...selectedPorts, newPort]);
+                              }}
+                            />
                           </div>
                         </TabsContent>
+
                       </Tabs>
-                      
+
                       <div className="mt-4 p-3 rounded-lg bg-accent/5 border border-accent/10">
                         <p className="text-sm text-muted-foreground">
                           <span className="font-semibold text-foreground">{selectedPorts.length}</span> port{selectedPorts.length !== 1 ? 's' : ''} selected
@@ -289,7 +302,7 @@ const PlanRoute = () => {
 
             {/* Generate Route Button */}
             <div className="max-w-5xl mx-auto mt-12">
-              <Button 
+              <Button
                 size="lg"
                 className="w-full h-14 text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 transition-all shadow-lg"
                 onClick={handleGenerateRoute}
@@ -306,6 +319,7 @@ const PlanRoute = () => {
             </div>
           </div>
         </section>
+
       </main>
 
       <Footer />
