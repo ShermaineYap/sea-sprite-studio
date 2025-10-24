@@ -54,20 +54,39 @@ npm run dev
 
 This project is built with:
 
-- **[Vite](https://vitejs.dev/)** - Frontend build tool
-- **[React 19](https://react.dev/)** - UI library
-- **[TypeScript](https://www.typescriptlang.org/)** - Type safety
+### Build Tool
+- **[Vite](https://vitejs.dev/)** - Fast frontend build tool and dev server
+
+### Core Framework & Language
+- **[React 19](https://react.dev/)** - UI library for building interactive interfaces
+- **[TypeScript](https://www.typescriptlang.org/)** - Static type checking for JavaScript
+
+### Styling & UI Components
 - **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework
-- **[shadcn/ui](https://ui.shadcn.com/)** - Component library
-- **[React Router v6](https://reactrouter.com/)** - Client-side routing
+- **[shadcn/ui](https://ui.shadcn.com/)** - Accessible component library built on Radix UI
+
+### Routing
+- **[React Router v6](https://reactrouter.com/)** - Client-side routing and navigation
+
+### State Management & Data Fetching
+- **[TanStack Query](https://tanstack.com/query/)** - Powerful server state management and caching
+
+### Form Management & Validation
+- **[React Hook Form](https://react-hook-form.com/)** - Performant form management with validation
+- **[Zod](https://zod.dev/)** - TypeScript-first schema validation
+
+### Maps & Geospatial
 - **[Google Maps API](https://developers.google.com/maps)** - Interactive maps and geospatial visualization
-- **[TanStack Query](https://tanstack.com/query/)** - Server state management
-- **[React Hook Form](https://react-hook-form.com/)** - Form management
-- **[Zod](https://zod.dev/)** - Schema validation
-- **[Lucide React](https://lucide.dev/)** - Icon system
-- **[date-fns](https://date-fns.org/)** - Date utilities
-- **[Sonner](https://sonner.emilkowal.ski/)** - Toast notifications
-- **[Recharts](https://recharts.org/)** - Data visualization
+
+### UI Utilities & Icons
+- **[Lucide React](https://lucide.dev/)** - Beautiful and consistent icon system
+- **[Sonner](https://sonner.emilkowal.ski/)** - Toast notification system
+
+### Data Visualization
+- **[Recharts](https://recharts.org/)** - Composable charting library built on React components
+
+### Utilities
+- **[date-fns](https://date-fns.org/)** - Modern JavaScript date utility library
 
 ## How can I deploy this project?
 
